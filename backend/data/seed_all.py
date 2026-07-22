@@ -24,7 +24,7 @@ from app.graph.seed import get_in_memory_data, write_local_graph_json, seed_neo4
 from app.models import (
     Zone, Vendor, Equipment, Specification, PurchaseOrder,
     NCR, ScheduleTask, TaskDependency, Shipment, CommissioningTest,
-    RFI, ProjectDocument
+    RFI, ProjectDocument, CascadeEvent
 )
 
 
@@ -47,7 +47,7 @@ async def seed_relational_db(db: AsyncSession):
 
     # Clear existing tables in sequence to avoid foreign key violations
     tables_to_clear = [
-        TaskDependency, RFI, Shipment, CommissioningTest, ScheduleTask,
+        CascadeEvent, TaskDependency, RFI, Shipment, CommissioningTest, ScheduleTask,
         NCR, PurchaseOrder, Specification, Equipment, Vendor, Zone, ProjectDocument
     ]
     for table in tables_to_clear:
@@ -275,6 +275,125 @@ async def seed_relational_db(db: AsyncSession):
             chunk_count=d["chunk_count"],
             is_indexed=d["is_indexed"],
             content_summary=d["content_summary"]
+        )
+        db.add(inst)
+
+    # 12. Cascade Events (Demo initial events)
+    demo_cascade_events = [
+        {
+            "id": "evt-001",
+            "trace_id": "trace-demo-1001",
+            "source_agent": "compliance",
+            "event_type": "ncr_raised",
+            "severity": "critical",
+            "entity_type": "ncr",
+            "entity_id": "NCR-023",
+            "summary": "Compliance Agent: Raised critical NCR-023 against UPS-2 due to voltage mismatch (380V submittal vs 400V spec).",
+            "details": {
+                "ncr_number": "NCR-023",
+                "equipment_tag": "UPS-2",
+                "specification": "SPEC-ELEC-001",
+                "actual_voltage": "380V",
+                "expected_voltage": "400V ±5%"
+            },
+            "explainability": {
+                "reasoning": "Vendor submittal specifies 380V output. Spec requires 400V 50Hz N+1 topology for Tier III rating.",
+                "evidence": [
+                    {"source": "DC-ALPHA-SPEC-ELEC", "finding": "Section 4.3.2 requires 400V AC output"},
+                    {"source": "PO-UPS-2026-002", "finding": "Eaton submittal states 380V output"}
+                ]
+            }
+        },
+        {
+            "id": "evt-002",
+            "trace_id": "trace-demo-1001",
+            "source_agent": "schedule",
+            "event_type": "delay_predicted",
+            "severity": "warning",
+            "entity_type": "schedule_task",
+            "entity_id": "TASK-142",
+            "summary": "Schedule Agent: Predicted 10-day delay on TASK-142 (Install UPS-2). Critical path completion shifted to Sep 14, 2026.",
+            "details": {
+                "task_code": "TASK-142",
+                "delay_days": 10,
+                "is_critical_path": True,
+                "downstream_blocked_tasks": 3
+            },
+            "explainability": {
+                "reasoning": "UPS-2 installation is on the critical path. 10-day delay directly shifts IST Level 3 commissioning.",
+                "recovery_options": ["Vertiv alternative (+4 days)", "Eaton tap adjustment (+2 days)"]
+            }
+        },
+        {
+            "id": "evt-003",
+            "trace_id": "trace-demo-1001",
+            "source_agent": "supply_chain",
+            "event_type": "alternative_found",
+            "severity": "info",
+            "entity_type": "vendor",
+            "entity_id": "VERTIV",
+            "summary": "Supply Chain Agent: Sourced compatible Vertiv replacement unit. Delivery lead time: 4 days (+12,400 INR).",
+            "details": {
+                "vendor_code": "VERTIV",
+                "vendor_name": "Vertiv Infrastructure",
+                "lead_time_days": 4,
+                "reliability_score": 0.94
+            },
+            "explainability": {
+                "reasoning": "Vertiv has available stock of Liebert EXM 400kVA (400V native output) in regional warehouse."
+            }
+        },
+        {
+            "id": "evt-004",
+            "trace_id": "trace-demo-1001",
+            "source_agent": "commissioning",
+            "event_type": "commissioning_blocked",
+            "severity": "warning",
+            "entity_type": "commissioning_test",
+            "entity_id": "CX-044",
+            "summary": "Commissioning Agent: Blocked CX-044 (UPS-2 Full Load Test) pending NCR-023 resolution.",
+            "details": {
+                "test_code": "CX-044",
+                "blocked_by": "NCR-023",
+                "ist_level": 3
+            },
+            "explainability": {
+                "reasoning": "IST Level 3 integrated system test cannot proceed without verified 400V power input."
+            }
+        },
+        {
+            "id": "evt-005",
+            "trace_id": "trace-demo-1001",
+            "source_agent": "knowledge",
+            "event_type": "precedent_found",
+            "severity": "info",
+            "entity_type": "rfi",
+            "entity_id": "RFI-047",
+            "summary": "Knowledge Agent: Identified identical tap adjustment precedent under RFI-047 (UPS-1 tap configuration).",
+            "details": {
+                "precedent_rfi": "RFI-047",
+                "resolution": "Output autotransformer tap adjustment",
+                "cost": 0,
+                "time_saved_hours": 12.0
+            },
+            "explainability": {
+                "reasoning": "Eaton autotransformer has internal ±5% taps. Field technician can re-tap unit in 1 day under warranty."
+            }
+        }
+    ]
+
+    for evt in demo_cascade_events:
+        inst = CascadeEvent(
+            id=to_uuid(evt["id"]),
+            trace_id=evt["trace_id"],
+            source_agent=evt["source_agent"],
+            event_type=evt["event_type"],
+            severity=evt["severity"],
+            entity_type=evt["entity_type"],
+            entity_id=evt["entity_id"],
+            summary=evt["summary"],
+            details=evt["details"],
+            explainability=evt["explainability"]
         )
         db.add(inst)
 

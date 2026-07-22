@@ -3,7 +3,7 @@ DCBrain API — Compliance & Quality
 Document upload, spec checking, NCR management.
 """
 
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -115,3 +115,44 @@ async def check_submittal(
     if "status" in res and res["status"] == "error":
         raise HTTPException(status_code=404, detail=res["message"])
     return res
+
+
+@router.post("/upload-submittal")
+async def upload_submittal(
+    equipment_tag: str = Form(...),
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Upload a PDF or document submittal file and run Compliance Agent audit on it.
+    Extracts document text and passes it to the multi-agent cascade.
+    """
+    from app.services.compliance_service import compliance_service
+    
+    file_bytes = await file.read()
+    extracted_text = ""
+    
+    try:
+        if file.filename and file.filename.lower().endswith(".pdf"):
+            import fitz
+            doc = fitz.open(stream=file_bytes, filetype="pdf")
+            for page in doc:
+                extracted_text += page.get_text() + "\n"
+        else:
+            extracted_text = file_bytes.decode("utf-8", errors="ignore")
+    except Exception as e:
+        extracted_text = f"Uploaded file content: {file.filename}"
+
+    res = await compliance_service.check_submittal(
+        equipment_tag=equipment_tag,
+        db=db,
+        submittal_text=extracted_text
+    )
+    
+    if "status" in res and res["status"] == "error":
+        raise HTTPException(status_code=404, detail=res["message"])
+    
+    res["filename"] = file.filename
+    res["extracted_char_count"] = len(extracted_text)
+    return res
+

@@ -45,7 +45,7 @@ If a parameter (such as voltage, capacity, temperature tolerance, or redundancy 
 class ComplianceService:
     """Service class executing the Compliance Agent auditing logic."""
 
-    async def check_submittal(self, equipment_tag: str, db: AsyncSession) -> Dict[str, Any]:
+    async def check_submittal(self, equipment_tag: str, db: AsyncSession, submittal_text: Optional[str] = None) -> Dict[str, Any]:
         """
         Runs the Compliance audit on vendor submittal:
         1. Queries DB to retrieve Equipment, Vendor, PO, and Specification.
@@ -103,6 +103,8 @@ class ComplianceService:
         Make/Model: {eq.make} / {eq.model}
         Submittal parameters: {json.dumps(submittal_data)}
         """
+        if submittal_text:
+            prompt += f"\n=== EXTRACTED UPLOADED DOCUMENT TEXT ===\n{submittal_text[:3000]}\n"
 
         # Call Gemini
         result: SpecComparisonSchema = await gemini_client.generate_structured(

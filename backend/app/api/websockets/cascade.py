@@ -1,8 +1,4 @@
-"""
-DCBrain WebSockets — Cascade Event Stream
-Enables real-time push notifications of agent cascade activities to the frontend client.
-"""
-
+import asyncio
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.agents.cascade_bus import cascade_bus
 
@@ -11,20 +7,34 @@ router = APIRouter()
 
 @router.websocket("/ws/cascade")
 async def websocket_endpoint(websocket: WebSocket):
-    """WebSocket endpoint that registers with the global cascade bus."""
+    """WebSocket endpoint that registers with the global cascade bus with heartbeat ping/pong."""
     await websocket.accept()
-    # Register connection with cascade bus
     cascade_bus.register_websocket(websocket)
-    
+
+    heartbeat_task = None
     try:
+        async def heartbeat():
+            while True:
+                await asyncio.sleep(25)
+                try:
+                    await websocket.send_json({"type": "ping"})
+                except Exception:
+                    break
+
+        heartbeat_task = asyncio.create_task(heartbeat())
+
         while True:
-            # Keep connection alive by listening for messages (pings/echoes)
             data = await websocket.receive_text()
-            # Echo back for verification if needed
-            await websocket.send_text(f"echo: {data}")
+            if data == "pong" or data == '{"type":"pong"}':
+                continue
+            await websocket.send_json({"type": "ack", "message": f"received: {data}"})
+
     except WebSocketDisconnect:
-        # Client disconnected
-        cascade_bus.unregister_websocket(websocket)
+        pass
     except Exception as e:
         print(f"⚠️ WebSocket error: {e}")
+    finally:
+        if heartbeat_task:
+            heartbeat_task.cancel()
         cascade_bus.unregister_websocket(websocket)
+

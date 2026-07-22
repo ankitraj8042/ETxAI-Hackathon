@@ -1,6 +1,7 @@
 """
 DCBrain Central Agent Orchestrator
 Coordinates the agent cascade bus and registers all specialized agent handlers.
+All 5 agents are real, LLM-powered implementations.
 """
 
 from typing import Dict, Any, List
@@ -18,21 +19,25 @@ class Orchestrator:
         self._is_initialized = False
 
     def initialize_agents(self):
-        """Lazy load and initialize all specialized agents to avoid circular imports."""
+        """Load and initialize all specialized agents (lazy to avoid circular imports)."""
         if self._is_initialized:
             return
 
         print("🤖 Orchestrator: Initializing AI Agents...")
 
+        # Import all real agent singletons
         from app.agents.schedule_agent import schedule_agent
         from app.agents.supply_chain_agent import supply_chain_agent
+        from app.agents.compliance_agent import compliance_agent
+        from app.agents.commissioning_agent import commissioning_agent
+        from app.agents.knowledge_agent import knowledge_agent
 
         self.agents = {
-            "compliance": ComplianceAgentMock(),
+            "compliance": compliance_agent,
             "schedule": schedule_agent,
             "supply_chain": supply_chain_agent,
-            "commissioning": CommissioningAgentMock(),
-            "knowledge": KnowledgeAgentMock(),
+            "commissioning": commissioning_agent,
+            "knowledge": knowledge_agent,
         }
 
         # ── Cascade Subscription Map ─────────────────────────────────
@@ -49,11 +54,10 @@ class Orchestrator:
 
         # 3. When Commissioning fails a test:
         cascade_bus.subscribe("test_failed", self.agents["compliance"].handle_test_failed)
-        cascade_bus.subscribe("test_failed", self.agents["schedule"].handle_test_failed)
         cascade_bus.subscribe("test_failed", self.agents["knowledge"].handle_test_failed)
 
         self._is_initialized = True
-        print("🤖 Orchestrator: All agent cascade listeners bound successfully.")
+        print("🤖 Orchestrator: All 5 agent cascade listeners bound successfully.")
 
     async def handle_user_approval(self, recommendation_id: str, plan_selected: str = "Plan A") -> Dict[str, Any]:
         """
@@ -142,89 +146,7 @@ class Orchestrator:
         return {"status": "error", "message": "No active recommendations to execute."}
 
 
-# ── Mocks for Phase 1 ─────────────────────────────────────────────────
-
-class AgentMock:
-    """Base class for stubbing out agents in Phase 1 scaffolding."""
-    def log_trigger(self, agent_name: str, event: CascadeEventPayload):
-        print(f"  🧠 [{agent_name.upper()} AGENT] Triggered by '{event.event_type}' for {event.entity_type} {event.entity_id}")
-
-
-class ComplianceAgentMock(AgentMock):
-    async def handle_test_failed(self, event: CascadeEventPayload):
-        self.log_trigger("compliance", event)
-
-
-class ScheduleAgentMock(AgentMock):
-    async def handle_ncr_raised(self, event: CascadeEventPayload):
-        self.log_trigger("schedule", event)
-        # Emit a simulated schedule impact calculation after 1s
-        await asyncio.sleep(1)
-        impact_evt = CascadeEventPayload(
-            source_agent="schedule",
-            event_type="delay_predicted",
-            entity_type="schedule_task",
-            entity_id="TASK-142",
-            summary="Schedule Agent: Predicted 10-day delay on TASK-142. Overall completion shifted to Sept 14.",
-            details={"critical_path": True, "delay_days": 10},
-            trace_id=event.trace_id,
-            severity="warning"
-        )
-        await cascade_bus.publish(impact_evt)
-
-    async def handle_test_failed(self, event: CascadeEventPayload):
-        self.log_trigger("schedule", event)
-
-
-class SupplyChainAgentMock(AgentMock):
-    async def handle_ncr_raised(self, event: CascadeEventPayload):
-        self.log_trigger("supply_chain", event)
-
-    async def handle_delay_predicted(self, event: CascadeEventPayload):
-        self.log_trigger("supply_chain", event)
-        # Emit a simulated alternative finder event
-        await asyncio.sleep(1)
-        alt_evt = CascadeEventPayload(
-            source_agent="supply_chain",
-            event_type="alternative_found",
-            entity_type="vendor",
-            entity_id="VEND-VERTIV",
-            summary="Supply Chain Agent: Sourced compatible Vertiv replacement. Delivery lead time: 4 days (+12,400 INR).",
-            details={"option": "purchase_alternative", "vendor": "Vertiv", "lead_time_days": 4},
-            trace_id=event.trace_id,
-            severity="info"
-        )
-        await cascade_bus.publish(alt_evt)
-
-
-class CommissioningAgentMock(AgentMock):
-    async def handle_ncr_raised(self, event: CascadeEventPayload):
-        self.log_trigger("commissioning", event)
-
-    async def handle_delay_predicted(self, event: CascadeEventPayload):
-        self.log_trigger("commissioning", event)
-
-
-class KnowledgeAgentMock(AgentMock):
-    async def handle_ncr_raised(self, event: CascadeEventPayload):
-        self.log_trigger("knowledge", event)
-        # Emit a simulated similar RFI lookup precedent
-        await asyncio.sleep(1)
-        precedent_evt = CascadeEventPayload(
-            source_agent="knowledge",
-            event_type="precedent_found",
-            entity_type="rfi",
-            entity_id="RFI-047",
-            summary="Knowledge Agent: Identified identical tap tap resolution precedent under RFI-047.",
-            details={"precedent": "RFI-047", "resolution": "tap_tap_adjustment", "cost": 0},
-            trace_id=event.trace_id,
-            severity="info"
-        )
-        await cascade_bus.publish(precedent_evt)
-
-    async def handle_test_failed(self, event: CascadeEventPayload):
-        self.log_trigger("knowledge", event)
-
 
 # Singleton orchestrator
 orchestrator = Orchestrator()
+

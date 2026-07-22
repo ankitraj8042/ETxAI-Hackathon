@@ -3,7 +3,7 @@ DCBrain API — Knowledge & RFI Intelligence Agent
 Chat endpoint, document search, RFI management.
 """
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -156,3 +156,88 @@ async def list_documents(
         }
         for d in docs
     ]
+
+
+@router.post("/index-document")
+async def index_document(
+    doc_code: str = Form(...),
+    title: str = Form(...),
+    category: str = Form("general"),
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Upload a document (PDF or text), extract text, chunk it, and index into ChromaDB vector store.
+    """
+    from uuid import uuid4
+    from app.core.dependencies import get_chroma_client
+
+    file_bytes = await file.read()
+    extracted_text = ""
+
+    try:
+        if file.filename and file.filename.lower().endswith(".pdf"):
+            import fitz
+            doc = fitz.open(stream=file_bytes, filetype="pdf")
+            for page in doc:
+                extracted_text += page.get_text() + "\n"
+        else:
+            extracted_text = file_bytes.decode("utf-8", errors="ignore")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to read file: {e}")
+
+    if not extracted_text.strip():
+        raise HTTPException(status_code=400, detail="No readable text found in document.")
+
+    # Chunk text into ~500 character chunks
+    chunk_size = 500
+    chunks = [extracted_text[i:i+chunk_size] for i in range(0, len(extracted_text), chunk_size)]
+
+    # Add to ChromaDB
+    try:
+        chroma = get_chroma_client()
+        collection = chroma.get_or_create_collection("dcbrain_documents")
+
+        chunk_ids = [f"{doc_code}_chunk_{idx}" for idx in range(len(chunks))]
+        chunk_metadatas = [
+            {
+                "doc_code": doc_code,
+                "file_name": file.filename,
+                "section": f"Chunk {idx + 1}",
+                "page": idx + 1,
+                "project": "dcbrain"
+            }
+            for idx in range(len(chunks))
+        ]
+
+        collection.add(
+            ids=chunk_ids,
+            documents=chunks,
+            metadatas=chunk_metadatas
+        )
+    except Exception as e:
+        print(f"⚠️ ChromaDB indexing warning: {e}")
+
+    # Register in SQL DB
+    doc_inst = ProjectDocument(
+        id=uuid4(),
+        doc_code=doc_code,
+        title=title,
+        doc_type="specification" if "spec" in category.lower() else "manual",
+        category=category,
+        file_name=file.filename or "uploaded_doc",
+        chunk_count=len(chunks),
+        is_indexed=True,
+        content_summary=extracted_text[:300] + "..."
+    )
+    db.add(doc_inst)
+    await db.commit()
+
+    return {
+        "status": "success",
+        "doc_code": doc_code,
+        "filename": file.filename,
+        "chunks_indexed": len(chunks),
+        "total_characters": len(extracted_text)
+    }
+
