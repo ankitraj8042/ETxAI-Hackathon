@@ -5,6 +5,10 @@ Loads environment variables and provides settings to the application.
 
 from pydantic_settings import BaseSettings
 from typing import List
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DB_PATH = BASE_DIR / "data" / "dcbrain.db"
 
 
 class Settings(BaseSettings):
@@ -19,7 +23,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
 
     # Database (Defaults to SQLite for local zero-config run, can override with Postgres in .env)
-    DATABASE_URL: str = "sqlite+aiosqlite:///./backend/data/dcbrain.db"
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{DB_PATH}"
 
     # Neo4j
     NEO4J_URI: str = "bolt://localhost:7687"
