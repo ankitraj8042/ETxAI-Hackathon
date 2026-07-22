@@ -1,0 +1,954 @@
+{
+  "nodes": [
+    {
+      "id": "zone-power-room",
+      "label": "Zone",
+      "properties": {
+        "id": "zone-power-room",
+        "name": "Power Room",
+        "zone_type": "power_room",
+        "floor": "Ground",
+        "tier_level": "III",
+        "description": "Main electrical distribution and backup power hall.",
+        "x_position": 50,
+        "y_position": 50,
+        "width": 250,
+        "height": 200
+      }
+    },
+    {
+      "id": "zone-cooling-plant",
+      "label": "Zone",
+      "properties": {
+        "id": "zone-cooling-plant",
+        "name": "Cooling Plant",
+        "zone_type": "cooling_plant",
+        "floor": "Ground",
+        "tier_level": "III",
+        "description": "Chiller and primary cooling water plant.",
+        "x_position": 350,
+        "y_position": 50,
+        "width": 250,
+        "height": 200
+      }
+    },
+    {
+      "id": "zone-it-hall-a",
+      "label": "Zone",
+      "properties": {
+        "id": "zone-it-hall-a",
+        "name": "IT Hall A",
+        "zone_type": "it_hall",
+        "floor": "First",
+        "tier_level": "III",
+        "description": "High density server rack whitespace.",
+        "x_position": 650,
+        "y_position": 50,
+        "width": 300,
+        "height": 400
+      }
+    },
+    {
+      "id": "vend-eaton",
+      "label": "Vendor",
+      "properties": {
+        "id": "vend-eaton",
+        "code": "EATON",
+        "name": "Eaton Power Solutions",
+        "category": "electrical",
+        "reliability_score": 0.92,
+        "on_time_delivery_rate": 0.88,
+        "contact_email": "support@eaton.com"
+      }
+    },
+    {
+      "id": "vend-cat",
+      "label": "Vendor",
+      "properties": {
+        "id": "vend-cat",
+        "code": "CAT",
+        "name": "Caterpillar India",
+        "category": "electrical",
+        "reliability_score": 0.89,
+        "on_time_delivery_rate": 0.82,
+        "contact_email": "power@cat.in"
+      }
+    },
+    {
+      "id": "vend-schneider",
+      "label": "Vendor",
+      "properties": {
+        "id": "vend-schneider",
+        "code": "SCHNEIDER",
+        "name": "Schneider Electric",
+        "category": "electrical",
+        "reliability_score": 0.95,
+        "on_time_delivery_rate": 0.9,
+        "contact_email": "dc.support@se.com"
+      }
+    },
+    {
+      "id": "vend-spx",
+      "label": "Vendor",
+      "properties": {
+        "id": "vend-spx",
+        "code": "SPX",
+        "name": "SPX Marley",
+        "category": "mechanical",
+        "reliability_score": 0.78,
+        "on_time_delivery_rate": 0.72,
+        "contact_email": "cooling@spx.com"
+      }
+    },
+    {
+      "id": "vend-vertiv",
+      "label": "Vendor",
+      "properties": {
+        "id": "vend-vertiv",
+        "code": "VERTIV",
+        "name": "Vertiv Infrastructure",
+        "category": "mechanical",
+        "reliability_score": 0.94,
+        "on_time_delivery_rate": 0.92,
+        "contact_email": "hvac@vertiv.com"
+      }
+    },
+    {
+      "id": "eq-ups-1",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-ups-1",
+        "tag": "UPS-1",
+        "name": "Eaton 93PM-400 UPS",
+        "category": "ups",
+        "make": "Eaton",
+        "model": "93PM-400",
+        "status": "commissioned",
+        "rated_capacity": "400 kVA",
+        "voltage_rating": "400V",
+        "redundancy": "N+1",
+        "zone_id": "zone-power-room",
+        "vendor_id": "vend-eaton",
+        "x_position": 20,
+        "y_position": 30,
+        "is_critical_path": false,
+        "risk_score": 0.05
+      }
+    },
+    {
+      "id": "eq-ups-2",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-ups-2",
+        "tag": "UPS-2",
+        "name": "Eaton 93PM-400 UPS",
+        "category": "ups",
+        "make": "Eaton",
+        "model": "93PM-400",
+        "status": "ncr_raised",
+        "rated_capacity": "400 kVA",
+        "voltage_rating": "380V",
+        "redundancy": "N+1",
+        "zone_id": "zone-power-room",
+        "vendor_id": "vend-eaton",
+        "x_position": 20,
+        "y_position": 90,
+        "is_critical_path": true,
+        "risk_score": 0.85
+      }
+    },
+    {
+      "id": "eq-gen-1",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-gen-1",
+        "tag": "GEN-1",
+        "name": "Caterpillar 3516B Genset",
+        "category": "generator",
+        "make": "Caterpillar",
+        "model": "3516B",
+        "status": "commissioned",
+        "rated_capacity": "2000 kW",
+        "voltage_rating": "11kV",
+        "redundancy": "N+1",
+        "zone_id": "zone-power-room",
+        "vendor_id": "vend-cat",
+        "x_position": 140,
+        "y_position": 30,
+        "is_critical_path": false,
+        "risk_score": 0.1
+      }
+    },
+    {
+      "id": "eq-gen-2",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-gen-2",
+        "tag": "GEN-2",
+        "name": "Caterpillar 3516B Genset",
+        "category": "generator",
+        "make": "Caterpillar",
+        "model": "3516B",
+        "status": "installed",
+        "rated_capacity": "2000 kW",
+        "voltage_rating": "11kV",
+        "redundancy": "N+1",
+        "zone_id": "zone-power-room",
+        "vendor_id": "vend-cat",
+        "x_position": 140,
+        "y_position": 90,
+        "is_critical_path": false,
+        "risk_score": 0.2
+      }
+    },
+    {
+      "id": "eq-swg-1",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-swg-1",
+        "tag": "SWG-1",
+        "name": "Schneider MasterPact LV Switchgear",
+        "category": "switchgear",
+        "make": "Schneider Electric",
+        "model": "MasterPact",
+        "status": "commissioned",
+        "rated_capacity": "3200A",
+        "voltage_rating": "400V",
+        "redundancy": "2N",
+        "zone_id": "zone-power-room",
+        "vendor_id": "vend-schneider",
+        "x_position": 80,
+        "y_position": 30,
+        "is_critical_path": false,
+        "risk_score": 0.05
+      }
+    },
+    {
+      "id": "eq-swg-2",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-swg-2",
+        "tag": "SWG-2",
+        "name": "Schneider MasterPact LV Switchgear",
+        "category": "switchgear",
+        "make": "Schneider Electric",
+        "model": "MasterPact",
+        "status": "in_transit",
+        "rated_capacity": "3200A",
+        "voltage_rating": "400V",
+        "redundancy": "2N",
+        "zone_id": "zone-power-room",
+        "vendor_id": "vend-schneider",
+        "x_position": 80,
+        "y_position": 90,
+        "is_critical_path": true,
+        "risk_score": 0.65
+      }
+    },
+    {
+      "id": "eq-ct-1",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-ct-1",
+        "tag": "CT-1",
+        "name": "SPX Marley Cooling Tower",
+        "category": "cooling_tower",
+        "make": "SPX Marley",
+        "model": "Marley-NC",
+        "status": "in_transit",
+        "rated_capacity": "1200 TR",
+        "voltage_rating": "400V",
+        "redundancy": "N+1",
+        "zone_id": "zone-cooling-plant",
+        "vendor_id": "vend-spx",
+        "x_position": 30,
+        "y_position": 40,
+        "is_critical_path": true,
+        "risk_score": 0.75
+      }
+    },
+    {
+      "id": "eq-crah-1",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-crah-1",
+        "tag": "CRAH-1",
+        "name": "Vertiv Liebert CRAH",
+        "category": "crah",
+        "make": "Vertiv",
+        "model": "Liebert-PCW",
+        "status": "commissioned",
+        "rated_capacity": "150 kW",
+        "voltage_rating": "400V",
+        "redundancy": "N+20%",
+        "zone_id": "zone-cooling-plant",
+        "vendor_id": "vend-vertiv",
+        "x_position": 140,
+        "y_position": 40,
+        "is_critical_path": false,
+        "risk_score": 0.05
+      }
+    },
+    {
+      "id": "eq-crah-2",
+      "label": "Equipment",
+      "properties": {
+        "id": "eq-crah-2",
+        "tag": "CRAH-2",
+        "name": "Vertiv Liebert CRAH",
+        "category": "crah",
+        "make": "Vertiv",
+        "model": "Liebert-PCW",
+        "status": "installed",
+        "rated_capacity": "150 kW",
+        "voltage_rating": "400V",
+        "redundancy": "N+20%",
+        "zone_id": "zone-cooling-plant",
+        "vendor_id": "vend-vertiv",
+        "x_position": 140,
+        "y_position": 100,
+        "is_critical_path": false,
+        "risk_score": 0.45
+      }
+    },
+    {
+      "id": "spec-elec-001",
+      "label": "Specification",
+      "properties": {
+        "id": "spec-elec-001",
+        "doc_code": "SPEC-ELEC-001",
+        "title": "Low Voltage Power Distribution & UPS Specification",
+        "category": "electrical",
+        "version": "1.0",
+        "requirements": [
+          {
+            "id": "4.3.2",
+            "text": "UPS system voltage rating shall be 400V \u00b15%, three-phase, 50Hz.",
+            "category": "electrical"
+          },
+          {
+            "id": "4.3.5",
+            "text": "UPS system shall provide N+1 redundancy for the active IT load.",
+            "category": "electrical"
+          },
+          {
+            "id": "4.4.1",
+            "text": "Switchgear shall contain integrated arc-flash detection relays.",
+            "category": "electrical"
+          }
+        ]
+      }
+    },
+    {
+      "id": "spec-mech-001",
+      "label": "Specification",
+      "properties": {
+        "id": "spec-mech-001",
+        "doc_code": "SPEC-MECH-001",
+        "title": "HVAC Precision Cooling & Containment Specification",
+        "category": "mechanical",
+        "version": "1.2",
+        "requirements": [
+          {
+            "id": "5.1.2",
+            "text": "Precision cooling units shall maintain white space temperature at 22\u00b0C \u00b12\u00b0C.",
+            "category": "mechanical"
+          },
+          {
+            "id": "5.2.1",
+            "text": "CRAH airflow capacity shall not fall below 12,000 CFM under full load.",
+            "category": "mechanical"
+          }
+        ]
+      }
+    },
+    {
+      "id": "po-ups2",
+      "label": "PurchaseOrder",
+      "properties": {
+        "id": "po-ups2",
+        "po_number": "PO-UPS-2026-002",
+        "description": "Eaton 93PM-400 UPS system for Power Room Room B",
+        "value": 14500000.0,
+        "status": "shipped",
+        "order_date": "2026-04-10",
+        "expected_delivery": "2026-07-28",
+        "submittal_status": "reviewed",
+        "submittal_data": {
+          "model": "93PM-400",
+          "capacity": "400 kVA",
+          "voltage": "380V"
+        },
+        "equipment_id": "eq-ups-2",
+        "vendor_id": "vend-eaton"
+      }
+    },
+    {
+      "id": "po-swg2",
+      "label": "PurchaseOrder",
+      "properties": {
+        "id": "po-swg2",
+        "po_number": "PO-SWG-2026-008",
+        "description": "Schneider LV Switchgear secondary feed panels",
+        "value": 8200000.0,
+        "status": "shipped",
+        "order_date": "2026-05-01",
+        "expected_delivery": "2026-08-05",
+        "submittal_status": "approved",
+        "submittal_data": {
+          "model": "MasterPact",
+          "voltage": "400V"
+        },
+        "equipment_id": "eq-swg-2",
+        "vendor_id": "vend-schneider"
+      }
+    },
+    {
+      "id": "ncr-023",
+      "label": "NCR",
+      "properties": {
+        "id": "ncr-023",
+        "ncr_number": "NCR-023",
+        "title": "Voltage Mismatch on UPS-2 Vendor Submittal",
+        "description": "Vendor submittal specifies 380V output rating, whereas project specification SPEC-ELEC-001 Section 4.3.2 strictly requires 400V.",
+        "severity": "critical",
+        "status": "open",
+        "spec_requirement": "UPS system voltage rating shall be 400V \u00b15%",
+        "spec_reference": "Section 4.3.2, Page 47",
+        "actual_value": "380V",
+        "deviation_details": "Output voltage 380V is outside the permitted range of 380V-420V (400V \u00b15%). This will prevent direct integration with local utility feed.",
+        "schedule_impact_days": 10,
+        "cost_impact": 0.0,
+        "critical_path_affected": true,
+        "equipment_id": "eq-ups-2",
+        "specification_id": "spec-elec-001",
+        "purchase_order_id": "po-ups2",
+        "ai_reasoning": {
+          "evidence": [
+            {
+              "source": "SPEC-ELEC-001",
+              "finding": "Voltage rating: 400V required"
+            },
+            {
+              "source": "PO-UPS-2026-002 submittal",
+              "finding": "Vendor specifies: 380V output"
+            },
+            {
+              "source": "Schedule",
+              "finding": "UPS-2 is prerequisite for downstream load bank testing Task-143"
+            }
+          ],
+          "reasoning": "This voltage rating deviation is critical because 380V equipment cannot support the standard 400V three-phase configuration of the downstream IT distribution bus without intermediate step-up transformers, which adds cost and weight. Eaton accepts warranty swaps for correct voltage models as seen in RFI-047.",
+          "alternatives": [
+            {
+              "option": "Warranty swap (EATON)",
+              "time_days": 6,
+              "cost": 0
+            },
+            {
+              "option": "Order alternative (VERTIV)",
+              "time_days": 4,
+              "cost": 12400
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "task-142",
+      "label": "ScheduleTask",
+      "properties": {
+        "id": "task-142",
+        "task_code": "TASK-142",
+        "name": "Install & Mount UPS-2",
+        "phase": "construction",
+        "category": "electrical",
+        "planned_start": "2026-08-01",
+        "planned_end": "2026-08-10",
+        "status": "blocked",
+        "progress_pct": 0.0,
+        "is_critical_path": true,
+        "equipment_id": "eq-ups-2",
+        "risk_score": 0.8,
+        "delay_days": 10,
+        "recovery_plans": [
+          {
+            "plan": "Plan A",
+            "description": "Invoke warranty swap under Eaton agreement Clause 4.2.1. Expected delivery of replacement within 6 days.",
+            "time_saved": 6,
+            "cost": 0
+          },
+          {
+            "plan": "Plan B",
+            "description": "Procure compatible Vertiv Liebert unit on priority. Lead time: 4 days.",
+            "time_saved": 8,
+            "cost": 12400
+          },
+          {
+            "plan": "Plan C",
+            "description": "Proceed with mechanical plant install and delay electrical power testing sequence.",
+            "time_saved": 3,
+            "cost": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "task-143",
+      "label": "ScheduleTask",
+      "properties": {
+        "id": "task-143",
+        "task_code": "TASK-143",
+        "name": "UPS-2 Load Bank Testing",
+        "phase": "commissioning",
+        "category": "electrical",
+        "planned_start": "2026-08-11",
+        "planned_end": "2026-08-15",
+        "status": "not_started",
+        "progress_pct": 0.0,
+        "is_critical_path": true,
+        "equipment_id": "eq-ups-2"
+      }
+    },
+    {
+      "id": "task-144",
+      "label": "ScheduleTask",
+      "properties": {
+        "id": "task-144",
+        "task_code": "TASK-144",
+        "name": "Integrated Systems Testing - Power (IST-L3)",
+        "phase": "commissioning",
+        "category": "electrical",
+        "planned_start": "2026-08-16",
+        "planned_end": "2026-08-20",
+        "status": "not_started",
+        "progress_pct": 0.0,
+        "is_critical_path": true
+      }
+    },
+    {
+      "id": "ship-001",
+      "label": "Shipment",
+      "properties": {
+        "id": "ship-001",
+        "tracking_id": "TRK-SCH-002",
+        "description": "Schneider master breaker cabinets",
+        "status": "in_transit",
+        "origin_city": "Chennai",
+        "origin_country": "India",
+        "current_location": "Inland Highway, Pune bypass",
+        "latitude": 18.5204,
+        "longitude": 73.8567,
+        "expected_arrival": "2026-08-05",
+        "delay_days": 2,
+        "risk_score": 0.45,
+        "equipment_id": "eq-swg-2",
+        "purchase_order_id": "po-swg2",
+        "vendor_id": "vend-schneider"
+      }
+    },
+    {
+      "id": "ship-002",
+      "label": "Shipment",
+      "properties": {
+        "id": "ship-002",
+        "tracking_id": "TRK-SPX-101",
+        "description": "SPX Marley Cooling Tower headers and cell",
+        "status": "delayed",
+        "origin_city": "Shanghai",
+        "origin_country": "China",
+        "current_location": "JNPT Port Customs, Mumbai",
+        "latitude": 18.95,
+        "longitude": 72.95,
+        "expected_arrival": "2026-07-25",
+        "delay_days": 8,
+        "risk_score": 0.8,
+        "risk_factors": [
+          "Port customs clearance congestion",
+          "Monsoon sea traffic"
+        ],
+        "equipment_id": "eq-ct-1",
+        "purchase_order_id": null,
+        "vendor_id": "vend-spx",
+        "ai_alternatives": [
+          {
+            "option": "Customs priority filing",
+            "impact": "Reduces delay to 3 days",
+            "cost": 1500
+          }
+        ],
+        "ai_impact_analysis": {
+          "critical_path": true,
+          "downstream_impact": "Blocks Cooling Plant Commissioning (TASK-180)",
+          "mitigation": "Initiate priority customs clearance."
+        }
+      }
+    },
+    {
+      "id": "cx-044",
+      "label": "CommissioningTest",
+      "properties": {
+        "id": "cx-044",
+        "test_code": "CX-044",
+        "name": "UPS-2 Load Bank Test",
+        "category": "electrical",
+        "standard_reference": "TIA-942 Section 5.3",
+        "tier_requirement": "III",
+        "result": "not_started",
+        "is_blocked": true,
+        "blocked_by": "UPS-2 NCR open (voltage deviation)",
+        "blocking_tests": [
+          "CX-045",
+          "CX-046",
+          "IST-L3-Power"
+        ],
+        "ist_level": 3,
+        "equipment_id": "eq-ups-2",
+        "schedule_task_id": "task-143",
+        "procedure_steps": [
+          {
+            "step": 1,
+            "action": "Verify load bank connections and cable sizing.",
+            "criteria": "Proper connections."
+          },
+          {
+            "step": 2,
+            "action": "Apply 100% capacity step load (400 kVA).",
+            "criteria": "UPS runs stable for 4 hours without overheat."
+          },
+          {
+            "step": 3,
+            "action": "Verify transfer time to bypass during utility failure.",
+            "criteria": "Transfer time < 10 milliseconds."
+          }
+        ],
+        "acceptance_criteria": {
+          "load_kva": 400,
+          "transfer_time_max_ms": 10,
+          "output_voltage": "400V \u00b15%"
+        }
+      }
+    },
+    {
+      "id": "cx-047",
+      "label": "CommissioningTest",
+      "properties": {
+        "id": "cx-047",
+        "test_code": "CX-047",
+        "name": "CRAH-2 Precision Airflow",
+        "category": "mechanical",
+        "standard_reference": "ASHRAE TC 9.9",
+        "tier_requirement": "III",
+        "result": "fail",
+        "is_blocked": false,
+        "blocking_tests": [
+          "IST-L3-Cooling"
+        ],
+        "ist_level": 3,
+        "equipment_id": "eq-crah-2",
+        "procedure_steps": [
+          {
+            "step": 1,
+            "action": "Power on CRAH-2 and verify variable fan controllers.",
+            "criteria": "VFD responds to control signal."
+          },
+          {
+            "step": 2,
+            "action": "Apply thermal load and measure hot aisle containment outflow.",
+            "criteria": "Containment temperature < 25\u00b0C."
+          }
+        ],
+        "measured_values": {
+          "temperature_c": 28.3,
+          "airflow_cfm": 8500
+        },
+        "acceptance_criteria": {
+          "temperature_c": {
+            "max": 25.0
+          },
+          "airflow_cfm": {
+            "min": 12000
+          }
+        },
+        "ai_diagnosis": "Containment outflow temperature exceeded the 25.0\u00b0C maximum limit by 3.3\u00b0C, and airflow capacity measured 8,500 CFM against a required 12,000 CFM threshold.",
+        "ai_fix_suggestion": "The combination of high temperature and low airflow points directly to Valve V17 actuator drift, restricting chilled water supply by approximately 30%. Action: Recalibrate Valve V17 actuator limit switches per manufacturer manual Section 6.3.2, page 34. Check hot aisle seals at Rack B-7.",
+        "ai_root_cause": [
+          "Chilled water valve V17 limit switch drift",
+          "Aisle containment gasket displacement"
+        ]
+      }
+    },
+    {
+      "id": "rfi-047",
+      "label": "RFI",
+      "properties": {
+        "id": "rfi-047",
+        "rfi_number": "RFI-047",
+        "subject": "UPS-1 Voltage Swap Request",
+        "question": "The factory submittal of Eaton for UPS-1 showed 380V configuration. The design spec demands 400V. Can the client accept 380V with bypass config or should we request Eaton to adjust transformer taps?",
+        "answer": "Client rejects 380V as it violates standard 400V utility setup. Eaton was instructed to adjust taps to 400V at no additional cost. Eaton complied under contract warranty clause 4.2.1, saving a procurement re-order cycle.",
+        "status": "closed",
+        "priority": "high",
+        "category": "electrical",
+        "discipline": "Electrical Engineering",
+        "raised_by": "J. Roy (Lead Electrical Engineer)",
+        "assigned_to": "S. Varma (Project Manager)",
+        "resolution_time_hours": 120.0,
+        "similar_rfis": [],
+        "equipment_id": "eq-ups-1"
+      }
+    },
+    {
+      "id": "doc-001",
+      "label": "Document",
+      "properties": {
+        "id": "doc-001",
+        "doc_code": "DC-ALPHA-SPEC-ELEC",
+        "title": "Low Voltage Power Distribution & UPS Specification",
+        "doc_type": "specification",
+        "category": "electrical",
+        "file_name": "DC-Alpha-Electrical-Spec-v3.pdf",
+        "chunk_count": 48,
+        "is_indexed": true,
+        "content_summary": "Design standard for the data center low voltage system. Requires 400V output UPS, N+1 topology, redundant feeder paths, and dual-bus switchgear configurations."
+      }
+    },
+    {
+      "id": "doc-002",
+      "label": "Document",
+      "properties": {
+        "id": "doc-002",
+        "doc_code": "DC-ALPHA-PO-UPS2",
+        "title": "Purchase Order PO-UPS-2026-002 and Submittal Pack",
+        "doc_type": "submittal",
+        "category": "electrical",
+        "file_name": "PO-UPS-2026-002-Submittal.pdf",
+        "chunk_count": 14,
+        "is_indexed": true,
+        "content_summary": "Vendor submittal documents from Eaton Power Solutions details a 400 kVA system with double conversion and 380V rated voltage output."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "eq-ups-1",
+      "target": "zone-power-room",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-ups-1",
+      "target": "vend-eaton",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-ups-2",
+      "target": "zone-power-room",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-ups-2",
+      "target": "vend-eaton",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-gen-1",
+      "target": "zone-power-room",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-gen-1",
+      "target": "vend-cat",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-gen-2",
+      "target": "zone-power-room",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-gen-2",
+      "target": "vend-cat",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-swg-1",
+      "target": "zone-power-room",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-swg-1",
+      "target": "vend-schneider",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-swg-2",
+      "target": "zone-power-room",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-swg-2",
+      "target": "vend-schneider",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-ct-1",
+      "target": "zone-cooling-plant",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-ct-1",
+      "target": "vend-spx",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-crah-1",
+      "target": "zone-cooling-plant",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-crah-1",
+      "target": "vend-vertiv",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-crah-2",
+      "target": "zone-cooling-plant",
+      "type": "INSTALLED_IN"
+    },
+    {
+      "source": "eq-crah-2",
+      "target": "vend-vertiv",
+      "type": "SUPPLIED_BY"
+    },
+    {
+      "source": "eq-ups-1",
+      "target": "spec-elec-001",
+      "type": "SPECIFIED_IN"
+    },
+    {
+      "source": "eq-ups-2",
+      "target": "spec-elec-001",
+      "type": "SPECIFIED_IN"
+    },
+    {
+      "source": "eq-crah-1",
+      "target": "spec-mech-001",
+      "type": "SPECIFIED_IN"
+    },
+    {
+      "source": "eq-crah-2",
+      "target": "spec-mech-001",
+      "type": "SPECIFIED_IN"
+    },
+    {
+      "source": "po-ups2",
+      "target": "eq-ups-2",
+      "type": "REFERENCES"
+    },
+    {
+      "source": "po-ups2",
+      "target": "vend-eaton",
+      "type": "PLACED_WITH"
+    },
+    {
+      "source": "eq-ups-2",
+      "target": "po-ups2",
+      "type": "ORDERED_VIA"
+    },
+    {
+      "source": "po-swg2",
+      "target": "eq-swg-2",
+      "type": "REFERENCES"
+    },
+    {
+      "source": "po-swg2",
+      "target": "vend-schneider",
+      "type": "PLACED_WITH"
+    },
+    {
+      "source": "eq-swg-2",
+      "target": "po-swg2",
+      "type": "ORDERED_VIA"
+    },
+    {
+      "source": "ncr-023",
+      "target": "eq-ups-2",
+      "type": "RAISED_AGAINST"
+    },
+    {
+      "source": "ncr-023",
+      "target": "spec-elec-001",
+      "type": "DEVIATES_FROM"
+    },
+    {
+      "source": "ncr-023",
+      "target": "po-ups2",
+      "type": "AFFECTS_PO"
+    },
+    {
+      "source": "ncr-023",
+      "target": "task-142",
+      "type": "IMPACTS_TASK"
+    },
+    {
+      "source": "task-142",
+      "target": "eq-ups-2",
+      "type": "REQUIRES"
+    },
+    {
+      "source": "task-143",
+      "target": "eq-ups-2",
+      "type": "REQUIRES"
+    },
+    {
+      "source": "task-143",
+      "target": "task-142",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "source": "task-144",
+      "target": "task-143",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "source": "ship-001",
+      "target": "eq-swg-2",
+      "type": "DELIVERS"
+    },
+    {
+      "source": "ship-002",
+      "target": "eq-ct-1",
+      "type": "DELIVERS"
+    },
+    {
+      "source": "cx-044",
+      "target": "eq-ups-2",
+      "type": "TESTS"
+    },
+    {
+      "source": "eq-ups-2",
+      "target": "cx-044",
+      "type": "TESTED_BY"
+    },
+    {
+      "source": "cx-044",
+      "target": "ncr-023",
+      "type": "BLOCKED_BY"
+    },
+    {
+      "source": "cx-047",
+      "target": "eq-crah-2",
+      "type": "TESTS"
+    },
+    {
+      "source": "eq-crah-2",
+      "target": "cx-047",
+      "type": "TESTED_BY"
+    },
+    {
+      "source": "rfi-047",
+      "target": "eq-ups-1",
+      "type": "RELATES_TO"
+    }
+  ]
+}
